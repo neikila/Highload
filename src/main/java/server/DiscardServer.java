@@ -29,6 +29,7 @@ public class DiscardServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
+                            System.out.println("Client have arrived");
                             ch.pipeline().addLast(new DiscardServerHandler());
                         }
                     })
