@@ -1,6 +1,8 @@
 package server;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
@@ -10,20 +12,18 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) { // (2)
-        ByteBuf in = ((ByteBuf) msg).duplicate();
-        try {
-            while (in.isReadable()) { // (1)
-                char ch = (char) in.readByte();
-                System.out.print(ch);
-                System.out.flush();
-            }
-        } finally {
-            ctx.write(msg);
-            ctx.flush(); // (2)
+    public void channelActive(final ChannelHandlerContext ctx) { // (1)
+        final ByteBuf time = ctx.alloc().buffer(30); // (2)
+        time.writeInt((int) (System.currentTimeMillis() / 1000L + 2208988800L));
 
-//            ReferenceCountUtil.release(in); // (2)
-        }
+        final ChannelFuture f = ctx.writeAndFlush(time); // (3)
+        f.addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture future) {
+                assert f == future;
+                ctx.close();
+            }
+        }); // (4)
     }
 
     @Override
