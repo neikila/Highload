@@ -19,7 +19,6 @@ public enum ContentType {
         this.representation = representation;
     }
 
-
     @Override
     public String toString() {
         return representation;

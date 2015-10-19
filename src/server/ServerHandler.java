@@ -36,18 +36,44 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(final ChannelHandlerContext ctx, Object msg) {
         ChannelFuture channelFuture;
-        Response response = new Response();
-        Headers headers = new Headers((ByteBuf) msg);
+        Request request = new Request((ByteBuf) msg);
+        StatusCode statusCode;
 
+        Response response = new Response();
         ByteBuf byteBuf = ctx.alloc().buffer();
-        try {
-            byte[] file = MyFileReader.getFile(Server.rootDirectory, "index.html");
-            byteBuf.writeBytes(response.buildHeader(StatusCode.OK, file.length, ContentType.valueOf("html")).getBytes());
-            byteBuf.writeBytes(file);
-        } catch (IOException e) {
-            logger.error("File not found.");
-            byteBuf.writeBytes(response.buildHeader(StatusCode.NOT_FOUND).getBytes());
+        if (request.getMethod() != null) {
+            switch (request.getMethod()) {
+                case GET:
+                    try {
+                        if (request.getFilename().matches("(/\\w+)+\\.\\w+")) {
+                            response.readFile(request.getFilename());
+                            statusCode = StatusCode.OK;
+                        } else {
+                            statusCode = StatusCode.FORBIDDEN;
+                        }
+                    } catch (IOException e) {
+                        logger.error("File not found.");
+                        statusCode = StatusCode.NOT_FOUND;
+                    }
+                    break;
+                case HEAD:
+                    statusCode = StatusCode.OK;
+                    break;
+                default:
+                    statusCode = StatusCode.METHOD_NOT_ALLOWED;
+            }
+        } else {
+            statusCode = StatusCode.NOT_IMPLEMENTED;
         }
+
+        response.buildHeader(statusCode);
+        byteBuf.writeBytes(response.getHeader().getBytes());
+        switch (statusCode) {
+            case OK:
+                byteBuf.writeBytes(response.getFile());
+                break;
+        }
+
         channelFuture = ctx.write(byteBuf);
         ctx.flush();
         channelFuture.addListener(new ChannelFutureListener() {

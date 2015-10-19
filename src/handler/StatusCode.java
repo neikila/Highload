@@ -4,10 +4,11 @@ package handler;
  * Created by neikila on 19.10.15.
  */
 public enum StatusCode {
-    OK("200 OK"),
-    FORBIDDEN("403 FORBIDDEN"),
-    NOT_FOUND("404 NOT FOUND"),
-    METHOD_NOT_ALLOWED(" 405 METHOD NOT ALLOWED");
+    OK                  ("200 OK"),
+    FORBIDDEN           ("403 FORBIDDEN"),
+    NOT_FOUND           ("404 NOT FOUND"),
+    METHOD_NOT_ALLOWED  ("405 METHOD NOT ALLOWED"),
+    NOT_IMPLEMENTED     ("501 NOT IMPLEMENTED");
 
     private String representation;
 
