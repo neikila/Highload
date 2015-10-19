@@ -15,10 +15,11 @@ public class Main {
         if (args.length > 0) {
             port = Integer.parseInt(args[0]);
         } else {
-            port = 8080;
+            port = 8081;
         }
         try {
             new DiscardServer(port).run();
+            logger.error("Server started on port {}", port);
         } catch (Exception e) {
             logger.error(e);
             logger.error("Error in DiscardServer.run");
