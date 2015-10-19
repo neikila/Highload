@@ -1,11 +1,15 @@
 package main;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import server.DiscardServer;
 
 /**
  * Created by neikila on 16.10.15.
  */
 public class Main {
+    public static Logger logger = LogManager.getLogger(Main.class.getName());
+
     public static void main(String[] args) {
         int port;
         if (args.length > 0) {
@@ -16,8 +20,8 @@ public class Main {
         try {
             new DiscardServer(port).run();
         } catch (Exception e) {
-            System.out.println(e);
-            System.out.println("Error in DiscardServer.run");
+            logger.error(e);
+            logger.error("Error in DiscardServer.run");
             System.exit(-1);
         }
     }

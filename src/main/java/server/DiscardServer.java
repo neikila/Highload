@@ -8,11 +8,14 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Created by neikila on 16.10.15.
  */
 public class DiscardServer {
+    private static Logger logger = LogManager.getLogger(DiscardServer.class.getName());
     private int port;
 
     public DiscardServer(int port) {
