@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 public class Server {
     private static Logger logger = LogManager.getLogger(Server.class.getName());
     private int port;
+    final private String rootDirectory = "/home/neikila/Study/HigloadProject/";
 
     public Server(int port) {
         this.port = port;
