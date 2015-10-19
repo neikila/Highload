@@ -12,7 +12,7 @@ import response.StatusCode;
 /**
  * Created by neikila on 19.10.15.
  */
-public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
+public class ServerHandler extends ChannelInboundHandlerAdapter {
 
 //    @Override
 //    public void channelActive(final ChannelHandlerContext ctx) { // (1)

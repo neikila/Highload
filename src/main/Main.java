@@ -2,7 +2,7 @@ package main;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import server.DiscardServer;
+import server.Server;
 
 /**
  * Created by neikila on 16.10.15.
@@ -18,7 +18,7 @@ public class Main {
             port = 8081;
         }
         try {
-            new DiscardServer(port).run();
+            new Server(port).run();
             logger.error("Server started on port {}", port);
         } catch (Exception e) {
             logger.error(e);

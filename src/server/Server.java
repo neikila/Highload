@@ -14,11 +14,11 @@ import org.apache.logging.log4j.Logger;
 /**
  * Created by neikila on 16.10.15.
  */
-public class DiscardServer {
-    private static Logger logger = LogManager.getLogger(DiscardServer.class.getName());
+public class Server {
+    private static Logger logger = LogManager.getLogger(Server.class.getName());
     private int port;
 
-    public DiscardServer(int port) {
+    public Server(int port) {
         this.port = port;
     }
 
@@ -33,7 +33,7 @@ public class DiscardServer {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
                             System.out.println("Client have arrived");
-                            ch.pipeline().addLast(new DiscardServerHandler());
+                            ch.pipeline().addLast(new ServerHandler());
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)          // (5)
