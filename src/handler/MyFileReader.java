@@ -1,8 +1,6 @@
 package handler;
 
-import io.netty.buffer.ByteBuf;
-
-import java.util.Scanner;
+import java.io.*;
 
 /**
  * Created by neikila on 19.10.15.
@@ -13,16 +11,25 @@ public class MyFileReader {
         System.out.println("Test");
     }
 
-    public static long getFile(String rootDirectory, String fileName, ByteBuf byteBuf) {
-
-        long size = 0;
-        Scanner file = new Scanner(rootDirectory + fileName);
-
-        while (file.hasNext()) {
-            ++size;
-            byteBuf.writeByte(file.nextByte());
+    public static byte[] getFile(String rootDirectory, String fileName) throws IOException {
+        ByteArrayOutputStream out = null;
+        InputStream input = null;
+        try{
+            out = new ByteArrayOutputStream();
+            input = new BufferedInputStream(new FileInputStream(rootDirectory + fileName));
+            int data = 0;
+            while ((data = input.read()) != -1){
+                out.write(data);
+            }
         }
-        return size;
-
+        finally{
+            if (null != input){
+                input.close();
+            }
+            if (null != out){
+                out.close();
+            }
+        }
+        return out.toByteArray();
     }
 }

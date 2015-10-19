@@ -18,8 +18,18 @@ public class Response {
                 .append("Server: ")         .append(serverName)     .append(rn)
                 .append("Date: ")           .append(getDate())      .append(rn)
                 .append("Content-Type: ")   .append(contentType)    .append(rn)
-                .append("; charset=utf-8")
                 .append("Content-Length: ") .append(contentLength)  .append(rn)
+                .append("Connection: close")                        .append(rn)
+                .append(rn);
+        return stringBuilder.toString();
+    }
+
+    public String buildHeader(StatusCode status) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder
+                .append("HTTP/1.1 ")        .append(status)         .append(rn)
+                .append("Server: ")         .append(serverName)     .append(rn)
+                .append("Date: ")           .append(getDate())      .append(rn)
                 .append("Connection: close")                        .append(rn)
                 .append(rn);
         return stringBuilder.toString();
