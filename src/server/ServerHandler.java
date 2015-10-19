@@ -5,14 +5,18 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import response.ContentType;
-import response.Response;
-import response.StatusCode;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import handler.ContentType;
+import handler.Response;
+import handler.StatusCode;
 
 /**
  * Created by neikila on 19.10.15.
  */
 public class ServerHandler extends ChannelInboundHandlerAdapter {
+
+    private static Logger logger = LogManager.getLogger(ServerHandler.class.getName());
 
 //    @Override
 //    public void channelActive(final ChannelHandlerContext ctx) { // (1)
@@ -34,16 +38,18 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         ChannelFuture channelFuture;
         Response response = new Response();
 
+        long length = 200;
+
         ByteBuf byteBuf = ctx.alloc().buffer();
-        byteBuf.writeBytes((ByteBuf)msg); // (1)
-        byteBuf.writeBytes("\n\n".getBytes());
-        byteBuf.writeBytes(response.buildHeader(StatusCode.OK, 200, ContentType.valueOf("html")).getBytes());
+        byteBuf.writeBytes(response.buildHeader(StatusCode.OK, length, ContentType.valueOf("html")).getBytes());
+        MyFileReader.getFile(Server.rootDirectory, "index.html", byteBuf);
+        byteBuf.writeBytes("test".getBytes());
         channelFuture = ctx.write(byteBuf);
-        ctx.flush(); // (2)
+        ctx.flush();
         channelFuture.addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
-                System.out.println("Finished");
+                logger.debug("Finished");
                 ctx.close();
             }
         });
@@ -52,6 +58,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) { // (4)
         // Close the connection when an exception is raised.
+        logger.error(cause.getStackTrace());
         cause.printStackTrace();
         ctx.close();
     }

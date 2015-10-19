@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 public class Server {
     private static Logger logger = LogManager.getLogger(Server.class.getName());
     private int port;
-    final private String rootDirectory = "/home/neikila/Study/HigloadProject/";
+    final public static String rootDirectory = "/home/neikila/Study/HigloadProject/";
 
     public Server(int port) {
         this.port = port;
@@ -33,7 +33,7 @@ public class Server {
                     .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
-                            System.out.println("Client have arrived");
+                            logger.debug("Client have arrived");
                             ch.pipeline().addLast(new ServerHandler());
                         }
                     })
@@ -43,11 +43,9 @@ public class Server {
             // Bind and start to accept incoming connections.
             ChannelFuture f = b.bind(port).sync(); // (7)
 
-            // Wait until the server socket is closed.
-            // In this example, this does not happen, but you can do that to gracefully
-            // shut down your server.
             f.channel().closeFuture().sync();
         } finally {
+            logger.info("Shutting server down");
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }

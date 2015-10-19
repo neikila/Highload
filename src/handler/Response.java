@@ -1,4 +1,4 @@
-package response;
+package handler;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -7,7 +7,7 @@ import java.util.Calendar;
  * Created by neikila on 19.10.15.
  */
 public class Response {
-    final private String rn = "\n";
+    final private String rn = "\r\n";
     final private String serverName = "My_beautiful_server";
     final private String dateFormat = "EEE MMM  d HH:mm:ss yyyy";
 
@@ -18,6 +18,7 @@ public class Response {
                 .append("Server: ")         .append(serverName)     .append(rn)
                 .append("Date: ")           .append(getDate())      .append(rn)
                 .append("Content-Type: ")   .append(contentType)    .append(rn)
+                .append("; charset=utf-8")
                 .append("Content-Length: ") .append(contentLength)  .append(rn)
                 .append("Connection: close")                        .append(rn)
                 .append(rn);

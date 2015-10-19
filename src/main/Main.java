@@ -19,10 +19,10 @@ public class Main {
         }
         try {
             new Server(port).run();
-            logger.error("Server started on port {}", port);
+            logger.info("Server started on port {}", port);
         } catch (Exception e) {
-            logger.error(e);
             logger.error("Error in DiscardServer.run");
+            logger.error(e.getStackTrace());
             System.exit(-1);
         }
     }
