@@ -49,10 +49,8 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
         response.buildHeader(statusCode);
         byteBuf.writeBytes(response.getHeader().getBytes());
-        switch (statusCode) {
-            case OK:
-                byteBuf.writeBytes(response.getFile());
-                break;
+        if (statusCode.equals(StatusCode.OK)) {
+            byteBuf.writeBytes(response.getFile());
         }
 
         channelFuture = ctx.write(byteBuf);
