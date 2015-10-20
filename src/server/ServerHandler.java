@@ -9,6 +9,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -34,7 +35,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
                         response.readFile(request.getFilename());
                         statusCode = StatusCode.OK;
                     } else {
-                        statusCode = StatusCode.FORBIDDEN;
+                        statusCode = StatusCode.BAD_REQUEST;
                     }
                 } catch (IOException e) {
                     logger.error("File not found.");
