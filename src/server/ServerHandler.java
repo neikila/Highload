@@ -18,21 +18,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     private static Logger logger = LogManager.getLogger(ServerHandler.class.getName());
 
-//    @Override
-//    public void channelActive(final ChannelHandlerContext ctx) { // (1)
-//        final ByteBuf time = ctx.alloc().buffer(30); // (2)
-//        time.writeInt((int) (System.currentTimeMillis() / 1000L + 2208988800L));
-//
-//        final ChannelFuture f = ctx.writeAndFlush(time); // (3)
-//        f.addListener(new ChannelFutureListener() {
-//            @Override
-//            public void operationComplete(ChannelFuture future) {
-//                assert f == future;
-//                ctx.close();
-//            }
-//        }); // (4)
-//    }
-
     @Override
     public void channelRead(final ChannelHandlerContext ctx, Object msg) {
         ChannelFuture channelFuture;
@@ -41,26 +26,22 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
         Response response = new Response();
         ByteBuf byteBuf = ctx.alloc().buffer();
-        if (request.getMethod() != null) {
-            switch (request.getMethod()) {
-                case GET:
-                    try {
-                        if (request.getFilename().matches("(/\\w+)+\\.\\w+")) {
-                            response.readFile(request.getFilename());
-                            statusCode = StatusCode.OK;
-                        } else {
-                            statusCode = StatusCode.FORBIDDEN;
-                        }
-                    } catch (IOException e) {
-                        logger.error("File not found.");
-                        statusCode = StatusCode.NOT_FOUND;
+        Method method = request.getMethod();
+        if (method != null) {
+            if (method.equals(Method.GET) || method.equals(Method.HEAD)) {
+                try {
+                    if (Validator.validateFilename(request.getFilename())) {
+                        response.readFile(request.getFilename());
+                        statusCode = StatusCode.OK;
+                    } else {
+                        statusCode = StatusCode.FORBIDDEN;
                     }
-                    break;
-                case HEAD:
-                    statusCode = StatusCode.OK;
-                    break;
-                default:
-                    statusCode = StatusCode.METHOD_NOT_ALLOWED;
+                } catch (IOException e) {
+                    logger.error("File not found.");
+                    statusCode = StatusCode.NOT_FOUND;
+                }
+            } else {
+                statusCode = StatusCode.METHOD_NOT_ALLOWED;
             }
         } else {
             statusCode = StatusCode.NOT_IMPLEMENTED;

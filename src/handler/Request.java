@@ -18,16 +18,18 @@ public class Request {
         String request = byteBuf.toString(io.netty.util.CharsetUtil.US_ASCII);
         logger.debug(request);
         Scanner input = new Scanner(request);
-        if (input.hasNext()) {
-            String buf = input.nextLine();
-            String[] splitted = buf.split(" ");
-            method = Method.valueOf(splitted[0]);
-            filename = splitted[1];
+        try {
+            method = Method.valueOf(input.next());
+            filename = input.next();
             if (filename.equals("/")) {
                 filename = "/index.html";
             }
-        } else {
+            filename = filename.split("\\?|#")[0];
+        } catch (Exception e) {
+            logger.debug("Error");
             method = null;
+        } finally {
+            input.close();
         }
     }
 

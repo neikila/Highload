@@ -1,0 +1,18 @@
+<html>
+    <body>
+
+        <h1>Hello from My first server</h1>
+        <div onclick="SendHead();">Отправить HEAD запрос через Ajax</div><br />
+    </body>
+    <script type="text/javascript" src="http://scriptjava.net/source/scriptjava/scriptjava.js"></script>
+    <script type="text/javascript">
+        function SendHead() {
+            $$a({
+                //отправляю HEAD запрос и получаю заголовок
+                type:'head',//тип запроса: get,post либо head
+                url:'/index/index.html',//url адрес файла обработчика
+                response:'text',//тип возвращаемого ответа text либо xml
+            });
+        }
+    </script>
+</html>

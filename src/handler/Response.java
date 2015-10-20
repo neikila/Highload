@@ -1,5 +1,7 @@
 package handler;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import server.Server;
 
 import java.io.IOException;
@@ -10,6 +12,8 @@ import java.util.Calendar;
  * Created by neikila on 19.10.15.
  */
 public class Response {
+    final private static Logger logger = LogManager.getLogger(Response.class.getName());
+
     final private String rn = "\r\n";
     final private String serverName = "My_beautiful_server";
     final private String dateFormat = "EEE MMM  d HH:mm:ss yyyy";
@@ -28,6 +32,7 @@ public class Response {
             contentType = ContentType.valueOf((String) filename.subSequence(point + 1, filename.length()));
             // TODO что делать если сервер не поддерживает запрашивает тип данных? Сейчас говорит что файл не найден
         } catch (IllegalArgumentException e) {
+            logger.debug("Error");
             throw new IOException();
         }
         file = MyFileReader.getFile(Server.rootDirectory, filename);
