@@ -63,7 +63,8 @@ public class Response {
         if (status.equals(StatusCode.OK)) {
             stringBuilder
                     .append("Content-Length: ") .append(file.length)    .append(rn)
-                    .append("Content-Type: ")   .append(contentType)    .append(rn);
+                    .append("Content-Type: ")   .append(contentType)
+                    .append("; charset=utf-8").append(rn);
         }
 
         stringBuilder.append(rn);
