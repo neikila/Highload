@@ -1,4 +1,4 @@
-package threadPool;
+package server.threadPool;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;

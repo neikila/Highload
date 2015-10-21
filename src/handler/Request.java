@@ -21,6 +21,7 @@ public class Request {
         try {
             method = Method.valueOf(input.next());
             filename = input.next();
+            filename = java.net.URLDecoder.decode(filename, "UTF-8");
             if (filename.equals("/")) {
                 filename = "/index.html";
             }
