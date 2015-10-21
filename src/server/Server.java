@@ -17,9 +17,10 @@ import org.apache.logging.log4j.Logger;
 public class Server {
     private static Logger logger = LogManager.getLogger(Server.class.getName());
     private int port;
-    final public static String rootDirectory = "/home/neikila/Study/HigloadProject/static";
-
-    public Server(int port) {
+    final public String rootDirectory;
+// = "/home/neikila/Study/HigloadProject/static";
+    public Server(int port, String rootDirectory) {
+        this.rootDirectory = rootDirectory;
         this.port = port;
     }
 
@@ -34,7 +35,7 @@ public class Server {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
                             logger.debug("Client have arrived");
-                            ch.pipeline().addLast(new ServerHandler());
+                            ch.pipeline().addLast(new ServerHandler(rootDirectory));
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)          // (5)

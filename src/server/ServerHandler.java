@@ -9,15 +9,19 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
  * Created by neikila on 19.10.15.
  */
 public class ServerHandler extends ChannelInboundHandlerAdapter {
-
     private static Logger logger = LogManager.getLogger(ServerHandler.class.getName());
+    private String rootDir;
+
+    public ServerHandler(String rootDir) {
+        super();
+        this.rootDir = rootDir;
+    }
 
     @Override
     public void channelRead(final ChannelHandlerContext ctx, Object msg) {
@@ -28,11 +32,12 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         Response response = new Response();
         ByteBuf byteBuf = ctx.alloc().buffer();
         Method method = request.getMethod();
+        String filename = rootDir + request.getFilename();
         if (method != null) {
             if (method.equals(Method.GET) || method.equals(Method.HEAD)) {
                 try {
-                    if (Validator.validateFilename(request.getFilename())) {
-                        response.readFile(request.getFilename());
+                    if (Validator.validateFilename(filename)) {
+                        response.readFile(filename);
                         statusCode = StatusCode.OK;
                     } else {
                         statusCode = StatusCode.BAD_REQUEST;

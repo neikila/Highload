@@ -2,7 +2,6 @@ package handler;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import server.Server;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -35,7 +34,7 @@ public class Response {
             logger.debug("Error");
             throw new IOException();
         }
-        file = MyFileReader.getFile(Server.rootDirectory, filename);
+        file = MyFileReader.getFile(filename);
     }
 
     public byte[] getFile() {

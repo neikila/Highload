@@ -11,12 +11,12 @@ public class MyFileReader {
         System.out.println("Test");
     }
 
-    public static byte[] getFile(String rootDirectory, String fileName) throws IOException {
+    public static byte[] getFile(String fileName) throws IOException {
         ByteArrayOutputStream out = null;
         InputStream input = null;
         try{
             out = new ByteArrayOutputStream();
-            input = new BufferedInputStream(new FileInputStream(rootDirectory + fileName));
+            input = new BufferedInputStream(new FileInputStream(fileName));
             int data = 0;
             while ((data = input.read()) != -1){
                 out.write(data);
