@@ -1,6 +1,9 @@
 package server;
 
-import handler.*;
+import handler.Method;
+import handler.Request;
+import handler.Response;
+import handler.StatusCode;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -10,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.nio.file.*;
 
 /**
  * Created by neikila on 19.10.15.
@@ -26,24 +30,33 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(final ChannelHandlerContext ctx, Object msg) {
         ChannelFuture channelFuture;
+        ByteBuf byteBuf = ctx.alloc().buffer();
+
         Request request = new Request((ByteBuf) msg);
         StatusCode statusCode;
 
         Response response = new Response();
-        ByteBuf byteBuf = ctx.alloc().buffer();
         Method method = request.getMethod();
         String filename = rootDir + request.getFilename();
         if (method != null) {
             if (method.equals(Method.GET) || method.equals(Method.HEAD)) {
                 try {
-                    if (Validator.validateFilename(filename)) {
-                        response.readFile(filename);
-                        statusCode = StatusCode.OK;
-                    } else {
-                        statusCode = StatusCode.BAD_REQUEST;
-                    }
-                } catch (IOException e) {
-                    logger.error("File not found.");
+                    logger.debug("filename: {}", filename);
+                    Path path = Paths.get(filename);
+                    Files.getLastModifiedTime(path);
+                    response.readFile(filename);
+                    statusCode = StatusCode.OK;
+                }
+                catch (NoSuchFileException e) {
+                    logger.debug("File not found.");
+                    statusCode = StatusCode.NOT_FOUND;
+                }
+                catch (FileSystemException e) {
+                    logger.debug("Bad filename.");
+                    statusCode = StatusCode.BAD_REQUEST;
+                }
+                catch (IOException e) {
+                    logger.debug("File not found.");
                     statusCode = StatusCode.NOT_FOUND;
                 }
             } else {

@@ -5,6 +5,6 @@ package handler;
  */
 public class Validator {
     public static boolean validateFilename(String filename) {
-        return filename.matches("(/[\\w\\_\\^\\-а-яА-Я]+)+\\.\\w+");
+        return filename.matches("(/[\\w\\_\\^\\-а-яА-Я ]+)+\\.\\w+");
     }
 }
