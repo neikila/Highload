@@ -4,6 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -20,6 +22,7 @@ public class Response {
     private String header;
     private byte[] file;
     private ContentType contentType;
+    private long fileSize;
 
     public String getHeader() {
         return header;
@@ -34,7 +37,11 @@ public class Response {
             logger.debug("Error");
             throw new IOException();
         }
-        file = MyFileReader.getFile(filename);
+        file = Files.readAllBytes(Paths.get(filename));
+    }
+
+    public void countSize(String filename) throws IOException {
+        fileSize = Files.size(Paths.get(filename));
     }
 
     public byte[] getFile() {
@@ -62,7 +69,7 @@ public class Response {
 
         if (status.equals(StatusCode.OK)) {
             stringBuilder
-                    .append("Content-Length: ") .append(file.length)    .append(rn)
+                    .append("Content-Length: ") .append(fileSize)    .append(rn)
                     .append("Content-Type: ")   .append(contentType)
                     .append("; charset=utf-8").append(rn);
         }

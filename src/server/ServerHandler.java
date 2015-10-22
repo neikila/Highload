@@ -39,28 +39,32 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         Method method = request.getMethod();
         String filename = rootDir + request.getFilename();
         if (method != null) {
-            if (method.equals(Method.GET) || method.equals(Method.HEAD)) {
-                try {
-                    logger.debug("filename: {}", filename);
-                    Path path = Paths.get(filename);
-                    Files.getLastModifiedTime(path);
-                    response.readFile(filename);
-                    statusCode = StatusCode.OK;
+            try {
+                switch (method) {
+                    case GET:
+                        logger.debug("filename: {}", filename);
+                        Path path = Paths.get(filename);
+                        Files.getLastModifiedTime(path);
+                        response.readFile(filename);
+                    case HEAD:
+                        response.countSize(filename);
+                        statusCode = StatusCode.OK;
+                        break;
+//                catch (NoSuchFileException e) {
+//                    logger.debug("File not found.");
+//                    statusCode = StatusCode.NOT_FOUND;
+//                }
+//                catch (FileSystemException e) {
+//                    logger.debug("Bad filename.");
+//                    statusCode = StatusCode.BAD_REQUEST;
+//                }
+                    default:
+                        statusCode = StatusCode.METHOD_NOT_ALLOWED;
                 }
-                catch (NoSuchFileException e) {
-                    logger.debug("File not found.");
-                    statusCode = StatusCode.NOT_FOUND;
-                }
-                catch (FileSystemException e) {
-                    logger.debug("Bad filename.");
-                    statusCode = StatusCode.BAD_REQUEST;
-                }
-                catch (IOException e) {
-                    logger.debug("File not found.");
-                    statusCode = StatusCode.NOT_FOUND;
-                }
-            } else {
-                statusCode = StatusCode.METHOD_NOT_ALLOWED;
+            }
+            catch (IOException e) {
+                logger.debug("File not found.");
+                statusCode = StatusCode.NOT_FOUND;
             }
         } else {
             statusCode = StatusCode.NOT_IMPLEMENTED;
@@ -72,6 +76,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             byteBuf.writeBytes(response.getFile());
         }
 
+        logger.debug("Response\n" + response.getHeader() + response.getFile());
         channelFuture = ctx.write(byteBuf);
         ctx.flush();
         channelFuture.addListener(new ChannelFutureListener() {
