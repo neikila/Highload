@@ -1,6 +1,5 @@
 package handler;
 
-import io.netty.buffer.ByteBuf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,8 +13,7 @@ public class Request {
     private Method method;
     private String filename;
 
-    public Request(ByteBuf byteBuf) {
-        String request = byteBuf.toString(io.netty.util.CharsetUtil.US_ASCII);
+    public Request(String request) {
         logger.debug(request);
         Scanner input = new Scanner(request);
         try {

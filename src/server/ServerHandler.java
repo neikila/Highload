@@ -1,6 +1,5 @@
 package server;
 
-import handler.Method;
 import handler.Request;
 import handler.Response;
 import handler.StatusCode;
@@ -11,9 +10,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.io.IOException;
-import java.nio.file.*;
 
 /**
  * Created by neikila on 19.10.15.
@@ -32,51 +28,17 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         ChannelFuture channelFuture;
         ByteBuf byteBuf = ctx.alloc().buffer();
 
-        Request request = new Request((ByteBuf) msg);
-        StatusCode statusCode;
-
+        String requestAsString = ((ByteBuf) msg).toString(io.netty.util.CharsetUtil.US_ASCII);
+        Request request = new Request(requestAsString);
         Response response = new Response();
-        Method method = request.getMethod();
-        String filename = rootDir + request.getFilename();
-        if (method != null) {
-            try {
-                switch (method) {
-                    case GET:
-                        logger.debug("filename: {}", filename);
-                        Path path = Paths.get(filename);
-                        Files.getLastModifiedTime(path);
-                        response.readFile(filename);
-                    case HEAD:
-                        response.countSize(filename);
-                        statusCode = StatusCode.OK;
-                        break;
-//                catch (NoSuchFileException e) {
-//                    logger.debug("File not found.");
-//                    statusCode = StatusCode.NOT_FOUND;
-//                }
-//                catch (FileSystemException e) {
-//                    logger.debug("Bad filename.");
-//                    statusCode = StatusCode.BAD_REQUEST;
-//                }
-                    default:
-                        statusCode = StatusCode.METHOD_NOT_ALLOWED;
-                }
-            }
-            catch (IOException e) {
-                logger.debug("File not found.");
-                statusCode = StatusCode.NOT_FOUND;
-            }
-        } else {
-            statusCode = StatusCode.NOT_IMPLEMENTED;
-        }
 
-        response.buildHeader(statusCode);
+        StatusCode statusCode = RequestHandler.getResponse(request, response, rootDir);
+
         byteBuf.writeBytes(response.getHeader().getBytes());
         if (statusCode.equals(StatusCode.OK)) {
             byteBuf.writeBytes(response.getFile());
         }
 
-        logger.debug("Response\n" + response.getHeader() + response.getFile());
         channelFuture = ctx.write(byteBuf);
         ctx.flush();
         channelFuture.addListener(new ChannelFutureListener() {
