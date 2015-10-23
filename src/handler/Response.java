@@ -33,11 +33,11 @@ public class Response {
         try {
             contentType = ContentType.valueOf((String) filename.subSequence(point + 1, filename.length()));
             // TODO что делать если сервер не поддерживает запрашивает тип данных? Сейчас говорит что файл не найден
-        } catch (IllegalArgumentException e) {
+            file = Files.readAllBytes(Paths.get(filename));
+        } catch (IllegalArgumentException | IOException e) {
             logger.debug("Error");
             throw new IOException();
         }
-        file = Files.readAllBytes(Paths.get(filename));
     }
 
     public void countSize(String filename) throws IOException {
@@ -70,9 +70,9 @@ public class Response {
         if (status.equals(StatusCode.OK)) {
             stringBuilder
                     .append("Content-Length: ") .append(fileSize)    .append(rn)
-                    .append("Content-Type: ")   .append(contentType)
-                    .append("; charset=utf-8").append(rn);
+                    .append("Content-Type: ")   .append(contentType) .append(rn);
         }
+
 
         stringBuilder.append(rn);
         header = stringBuilder.toString();

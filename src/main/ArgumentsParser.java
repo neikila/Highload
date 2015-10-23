@@ -13,7 +13,7 @@ public class ArgumentsParser {
     private Integer port = 8081;
 
     @Parameter(names = { "-pullSize"}, description = "pull size", validateWith = ThreadAmountValidation.class)
-    private Integer pullSize = 1;
+    private Integer pullSize = 3;
 
     public String getRootDir() {
         return rootDir;

@@ -3,7 +3,7 @@ package main;
 import com.beust.jcommander.JCommander;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import server.Server;
+import server.asyncServer.AsyncServer;
 
 /**
  * Created by neikila on 16.10.15.
@@ -22,13 +22,14 @@ public class Main {
 //        }
         logger.info("Server started on port {}", port);
         logger.info("Root directory {}", parser.getRootDir());
-//        new AsyncServer(port, parser.getPullSize()).start();
-        try {
-            new Server(port, parser.getRootDir()).run();
-        } catch (Exception e) {
-            logger.error("Error in DiscardServer.run");
-            logger.error(e.getStackTrace());
-            System.exit(-1);
-        }
+        AsyncServer temp = new AsyncServer(port, parser.getPullSize(), parser.getRootDir());
+        temp.start();
+//        try {
+//            new Server(port, parser.getRootDir()).run();
+//        } catch (Exception e) {
+//            logger.error("Error in DiscardServer.run");
+//            logger.error(e.getStackTrace());
+//            System.exit(-1);
+//        }
     }
 }

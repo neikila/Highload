@@ -15,8 +15,8 @@ public class PortValidation implements IParameterValidator {
         } catch (Exception e) {
             throw new ParameterException(s + " should be integer.");
         }
-        if (portNum < 1024) {
-            throw new ParameterException(s + " should be over 1024.");
+        if (portNum < 1) {
+            throw new ParameterException(s + " should be over 0.");
         }
     }
 }

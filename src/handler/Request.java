@@ -20,7 +20,7 @@ public class Request {
             method = Method.valueOf(input.next());
             filename = input.next();
             filename = java.net.URLDecoder.decode(filename, "UTF-8");
-            if (filename.equals("/")) {
+            if (filename.endsWith("/")) {
                 filename = "/index.html";
             }
             filename = filename.split("\\?|#")[0];

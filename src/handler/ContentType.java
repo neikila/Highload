@@ -12,6 +12,7 @@ public enum ContentType {
     png("image/png"),
     gif("image/gif"),
     swf("application/x-shockwave-flash");
+//    "; charset=utf-8"
 
     private String representation;
 
