@@ -10,12 +10,14 @@ import java.util.Scanner;
  */
 public class Request {
     final private static Logger logger = LogManager.getLogger(Request.class.getName());
-    private Method method;
+    private Method method = null;
     private String filename;
     private String params;
+    private boolean isCorrect;
 
     public Request(String request) {
         logger.debug(request);
+        isCorrect = true;
         try (Scanner input = new Scanner(request)) {
             method = Method.valueOf(input.next());
             filename = input.next();
@@ -27,10 +29,17 @@ public class Request {
             if (filename.endsWith("/")) {
                 filename += "/index.html";
             }
+            if(!input.next().equals("HTTP/1.1")) {
+                isCorrect = false;
+            }
         } catch (Exception e) {
             logger.debug("Error");
-            method = null;
+            isCorrect = false;
         }
+    }
+
+    public boolean isCorrect() {
+        return isCorrect;
     }
     // TODO isCorrect
 

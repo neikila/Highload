@@ -1,6 +1,5 @@
 package server.asyncServer;
 
-import handler.Method;
 import handler.Request;
 import handler.Response;
 import handler.StatusCode;
@@ -8,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -19,22 +17,17 @@ public class RequestHandler {
     private static Logger logger = LogManager.getLogger(RequestHandler.class.getName());
 
     public static StatusCode getResponse(Request request, Response response, String rootDir) {
-//        Path rootPath = Paths.get(rootDir);
         StatusCode statusCode;
-        Method method = request.getMethod();
-        String filename = rootDir + request.getFilename();
-        Path path = Paths.get(filename).normalize();
-        logger.debug("filename: {}", path.toString());
-        try {
-            if (!path.startsWith(rootDir)) {
-                throw new IOException();
-            }
-            if (method != null) {
+        if (request.isCorrect()) {
+            Path path = Paths.get(rootDir + request.getFilename()).normalize();
+            logger.debug("filename: {}", path.toString());
+            try {
+                if (!path.startsWith(rootDir) || !path.toFile().isFile()) {
+                    throw new IOException();
+                }
                 response.setFile(path.toString());
-                response.updateContentType();
-                switch (method) {
+                switch (request.getMethod()) {
                     case GET:
-                        Files.getLastModifiedTime(path);
                         response.readFile();
                     case HEAD:
                         response.countSize();
@@ -51,26 +44,31 @@ public class RequestHandler {
                     default:
                         statusCode = StatusCode.METHOD_NOT_ALLOWED;
                 }
-            } else {
-                statusCode = StatusCode.NOT_IMPLEMENTED;
             }
-        }
-        catch (IllegalArgumentException e) {
-            logger.debug("Wrong media type.");
-            statusCode = StatusCode.UNSUPPORTED_MEDIA_TYPE;
-        }
-        catch (IOException e) {
-            if (request.getFilename().endsWith("/index.html")) {
-                logger.debug("Index file not Found.");
-                statusCode = StatusCode.FORBIDDEN;
+            // If there are any problems with file
+//            catch (IllegalArgumentException e) {
+//                logger.debug("Wrong media type.");
+//                statusCode = StatusCode.UNSUPPORTED_MEDIA_TYPE;
+//            }
+            catch (IOException e) {
+                if (request.getFilename().endsWith("/index.html")) {
+                    logger.debug("Index file not Found.");
+                    statusCode = StatusCode.FORBIDDEN;
+                } else {
+                    logger.debug("File not found.");
+                    statusCode = StatusCode.NOT_FOUND;
+                }
+            }
+        } else {
+            // If request is not correct
+            if (request.getMethod() == null) {
+                statusCode = StatusCode.NOT_IMPLEMENTED;
             } else {
-                logger.debug("File not found.");
-                statusCode = StatusCode.NOT_FOUND;
+                statusCode = StatusCode.BAD_REQUEST;
             }
         }
         response.buildHeader(statusCode);
-
-        logger.debug("Response\n" + response.getHeader() + (statusCode.equals(StatusCode.OK) && method.equals(Method.GET)? new String(response.getFile()) : ""));
+        logger.debug("Response\n" + response.getHeader() + (response.getFile() != null ? new String(response.getFile()) : ""));
         return statusCode;
     }
 }

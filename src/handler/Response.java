@@ -20,7 +20,7 @@ public class Response {
     final private String dateFormat = "EEE MMM  d HH:mm:ss yyyy";
 
     private String header;
-    private byte[] file;
+    private byte[] file = null;
     private ContentType contentType;
     private long fileSize;
     private String filename;
@@ -31,16 +31,12 @@ public class Response {
 
     public void setFile(String fileName) {
         this.filename = fileName;
+        contentType = ContentType.getType(fileName);
     }
 
     public void readFile() throws IOException {
         // TODO что делать если сервер не поддерживает запрашивает тип данных? Сейчас говорит что файл не найден
         file = Files.readAllBytes(Paths.get(filename));
-    }
-
-    public void updateContentType() throws IllegalArgumentException{
-        int point = filename.lastIndexOf('.');
-        contentType = ContentType.valueOf((String) filename.subSequence(point + 1, filename.length()));
     }
 
     public void countSize() throws IOException {
