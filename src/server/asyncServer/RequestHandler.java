@@ -55,6 +55,10 @@ public class RequestHandler {
                 statusCode = StatusCode.NOT_IMPLEMENTED;
             }
         }
+        catch (IllegalArgumentException e) {
+            logger.debug("Wrong media type.");
+            statusCode = StatusCode.UNSUPPORTED_MEDIA_TYPE;
+        }
         catch (IOException e) {
             if (request.getFilename().endsWith("/index.html")) {
                 logger.debug("Index file not Found.");

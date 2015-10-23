@@ -20,6 +20,10 @@ public enum ContentType {
         this.representation = representation;
     }
 
+    static public ContentType getFile(String file) {
+        
+    }
+
     @Override
     public String toString() {
         return representation;

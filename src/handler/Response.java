@@ -38,14 +38,13 @@ public class Response {
         file = Files.readAllBytes(Paths.get(filename));
     }
 
-    public void updateContentType() {
+    public void updateContentType() throws IllegalArgumentException{
         int point = filename.lastIndexOf('.');
         contentType = ContentType.valueOf((String) filename.subSequence(point + 1, filename.length()));
     }
 
     public void countSize() throws IOException {
         int point = filename.lastIndexOf('.');
-        contentType = ContentType.valueOf((String) filename.subSequence(point + 1, filename.length()));
         fileSize = Files.size(Paths.get(filename));
     }
 
