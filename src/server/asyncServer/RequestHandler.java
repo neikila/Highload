@@ -46,6 +46,8 @@ public class RequestHandler {
                 }
             }
             // If there are any problems with file
+
+            // it was removed because all unsupported types are returned as txt
 //            catch (IllegalArgumentException e) {
 //                logger.debug("Wrong media type.");
 //                statusCode = StatusCode.UNSUPPORTED_MEDIA_TYPE;
