@@ -1,6 +1,6 @@
 all: run
 run:
-	@java -jar 1.0-1.0-SNAPSHOT-jar-with-dependencies.jar -port 80
+	@java -jar target/1.0-1.0-SNAPSHOT-jar-with-dependencies.jar -port 80
 clean:
 	@rm -rf target
 compileMvn: clean

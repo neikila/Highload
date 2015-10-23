@@ -29,7 +29,7 @@ public class Request {
             if (filename.endsWith("/")) {
                 filename += "/index.html";
             }
-            if(!input.next().equals("HTTP/1.1")) {
+            if(!input.next().equals("HTTP/1.1") && !input.next().equals("HTTP/1.0")  ) {
                 isCorrect = false;
             }
         } catch (Exception e) {
