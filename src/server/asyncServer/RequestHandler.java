@@ -19,19 +19,25 @@ public class RequestHandler {
     private static Logger logger = LogManager.getLogger(RequestHandler.class.getName());
 
     public static StatusCode getResponse(Request request, Response response, String rootDir) {
+//        Path rootPath = Paths.get(rootDir);
         StatusCode statusCode;
         Method method = request.getMethod();
         String filename = rootDir + request.getFilename();
-        if (method != null) {
-            try {
+        Path path = Paths.get(filename).normalize();
+        logger.debug("filename: {}", path.toString());
+        try {
+            if (!path.startsWith(rootDir)) {
+                throw new IOException();
+            }
+            if (method != null) {
+                response.setFile(path.toString());
+                response.updateContentType();
                 switch (method) {
                     case GET:
-                        logger.debug("filename: {}", filename);
-                        Path path = Paths.get(filename);
                         Files.getLastModifiedTime(path);
-                        response.readFile(filename);
+                        response.readFile();
                     case HEAD:
-                        response.countSize(filename);
+                        response.countSize();
                         statusCode = StatusCode.OK;
                         break;
 //                catch (NoSuchFileException e) {
@@ -45,15 +51,18 @@ public class RequestHandler {
                     default:
                         statusCode = StatusCode.METHOD_NOT_ALLOWED;
                 }
+            } else {
+                statusCode = StatusCode.NOT_IMPLEMENTED;
             }
-            catch (IOException e) {
-                if (request.getFilename().endsWith("/index.html")) {
-                }
+        }
+        catch (IOException e) {
+            if (request.getFilename().endsWith("/index.html")) {
+                logger.debug("Index file not Found.");
+                statusCode = StatusCode.FORBIDDEN;
+            } else {
                 logger.debug("File not found.");
                 statusCode = StatusCode.NOT_FOUND;
             }
-        } else {
-            statusCode = StatusCode.NOT_IMPLEMENTED;
         }
         response.buildHeader(statusCode);
 

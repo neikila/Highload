@@ -23,24 +23,29 @@ public class Response {
     private byte[] file;
     private ContentType contentType;
     private long fileSize;
+    private String filename;
 
     public String getHeader() {
         return header;
     }
 
-    public void readFile(String filename) throws IOException {
-        int point = filename.lastIndexOf('.');
-        try {
-            contentType = ContentType.valueOf((String) filename.subSequence(point + 1, filename.length()));
-            // TODO что делать если сервер не поддерживает запрашивает тип данных? Сейчас говорит что файл не найден
-            file = Files.readAllBytes(Paths.get(filename));
-        } catch (IllegalArgumentException | IOException e) {
-            logger.debug("Error");
-            throw new IOException();
-        }
+    public void setFile(String fileName) {
+        this.filename = fileName;
     }
 
-    public void countSize(String filename) throws IOException {
+    public void readFile() throws IOException {
+        // TODO что делать если сервер не поддерживает запрашивает тип данных? Сейчас говорит что файл не найден
+        file = Files.readAllBytes(Paths.get(filename));
+    }
+
+    public void updateContentType() {
+        int point = filename.lastIndexOf('.');
+        contentType = ContentType.valueOf((String) filename.subSequence(point + 1, filename.length()));
+    }
+
+    public void countSize() throws IOException {
+        int point = filename.lastIndexOf('.');
+        contentType = ContentType.valueOf((String) filename.subSequence(point + 1, filename.length()));
         fileSize = Files.size(Paths.get(filename));
     }
 

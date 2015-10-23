@@ -3,6 +3,9 @@
 
         <h1>Hello from My first server</h1>
         <div onclick="SendHead();">Send head request via Ajax</div><br />
+        <div onclick="SendWrongHead();">Send wrong head request via Ajax</div><br />
+        <div onclick="SendWrongHeadToGetEmptyDirectory();">Send wrong head request to directory via Ajax</div><br />
+        <div onclick="SendWrongHeadToGetUnexistingDirectory();">Send wrong head request to unexisting directory via Ajax</div><br />
     </body>
     <script type="text/javascript" src="http://scriptjava.net/source/scriptjava/scriptjava.js"></script>
     <script type="text/javascript">
@@ -13,5 +16,27 @@
                 response:'text'
             });
         }
+        function SendWrongHead() {
+            $$a({
+                type:'head',
+                url:'/index/index12.html',
+                response:'text'
+            });
+        }
+        function SendWrongHeadToGetEmptyDirectory() {
+            $$a({
+                type:'head',
+                url:'/test/',
+                response:'text'
+            });
+        }
+        function SendWrongHeadToGetUnexistingDirectory() {
+            $$a({
+                type:'head',
+                url:'/test12/',
+                response:'text'
+            });
+        }
+
     </script>
 </html>

@@ -12,25 +12,27 @@ public class Request {
     final private static Logger logger = LogManager.getLogger(Request.class.getName());
     private Method method;
     private String filename;
+    private String params;
 
     public Request(String request) {
         logger.debug(request);
-        Scanner input = new Scanner(request);
-        try {
+        try (Scanner input = new Scanner(request)) {
             method = Method.valueOf(input.next());
             filename = input.next();
-            filename = java.net.URLDecoder.decode(filename, "UTF-8");
-            if (filename.endsWith("/")) {
-                filename = "/index.html";
+            String[] temp = filename.split("\\?|#");
+            if (temp.length > 1) {
+                params = temp[1];
             }
-            filename = filename.split("\\?|#")[0];
+            filename = java.net.URLDecoder.decode(temp[0], "UTF-8");
+            if (filename.endsWith("/")) {
+                filename += "/index.html";
+            }
         } catch (Exception e) {
             logger.debug("Error");
             method = null;
-        } finally {
-            input.close();
         }
     }
+    // TODO isCorrect
 
     public String getFilename() {
         return filename;
