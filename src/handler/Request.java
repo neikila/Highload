@@ -13,6 +13,7 @@ public class Request {
     private Method method = null;
     private String filename;
     private String params;
+    private String version;
     private boolean isCorrect;
 
     public Request(String request) {
@@ -29,7 +30,9 @@ public class Request {
             if (filename.endsWith("/")) {
                 filename += "/index.html";
             }
-            if(!input.next().equals("HTTP/1.1") && !input.next().equals("HTTP/1.0")  ) {
+            temp = input.next().split("\\/");
+            version = temp[1];
+            if(!version.equals("1.1") && !temp.equals("1.0") || !temp[0].equals("HTTP")) {
                 isCorrect = false;
             }
         } catch (Exception e) {
