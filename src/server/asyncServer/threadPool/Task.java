@@ -4,12 +4,15 @@ import handler.Method;
 import handler.Request;
 import handler.Response;
 import handler.StatusCode;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import server.asyncServer.RequestHandler;
-import server.asyncServer.ResponseWriter;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
-import java.nio.channels.CompletionHandler;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * Created by neikila on 21.10.15.
@@ -17,6 +20,7 @@ import java.nio.channels.CompletionHandler;
 public class Task implements Runnable {
     private AsynchronousSocketChannel connection;
     private String rootDir;
+    private Logger logger = LogManager.getLogger(Task.class.getName());
 
     public Task(AsynchronousSocketChannel connection, String rootDir) {
         this.connection = connection;
@@ -26,35 +30,40 @@ public class Task implements Runnable {
     @Override
     public void run() {
         // TODO read without limit
-        ByteBuffer buffer = ByteBuffer.allocateDirect(1024);
-        connection.read(buffer, buffer, new CompletionHandler<Integer, ByteBuffer>() {
-            @Override
-            public void completed(Integer result, ByteBuffer attachment) {
-                attachment.flip();
-                byte[] buffer = new byte[attachment.limit()];
-                attachment.get(buffer).clear();
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1024);
+        Future future = connection.read(byteBuffer);
+        try {
+            future.get();
+            byteBuffer.flip();
+            byte[] buffer = new byte[byteBuffer.limit()];
+            byteBuffer.get(buffer).clear();
 
-                Request request = new Request(new String(buffer));
-                Response response = new Response();
+            Request request = new Request(new String(buffer));
+            Response response = new Response();
 
-                StatusCode statusCode = RequestHandler.getResponse(request, response, rootDir);
-                int size = response.getHeader().length() +
-                        (statusCode.equals(StatusCode.OK) && request.getMethod().equals(Method.GET) ?
-                                response.getFile().length : 0);
-                ByteBuffer bufferResponse = ByteBuffer.allocateDirect(size);
-                bufferResponse.put(response.getHeader().getBytes());
-                if (statusCode.equals(StatusCode.OK) && request.getMethod().equals(Method.GET)) {
-                    bufferResponse.put(response.getFile());
-                }
-                bufferResponse.flip();
-                connection.write(bufferResponse, bufferResponse,
-                        new ResponseWriter(connection));
+            StatusCode statusCode = RequestHandler.getResponse(request, response, rootDir);
+            int size = response.getHeader().length() +
+                    (statusCode.equals(StatusCode.OK) && request.getMethod().equals(Method.GET) ?
+                            response.getFile().length : 0);
+            ByteBuffer bufferResponse = ByteBuffer.allocateDirect(size);
+            bufferResponse.put(response.getHeader().getBytes());
+            if (statusCode.equals(StatusCode.OK) && request.getMethod().equals(Method.GET)) {
+                bufferResponse.put(response.getFile());
             }
-
-            @Override
-            public void failed(Throwable exc, ByteBuffer attachment) {
-
-            }
-        });
+            bufferResponse.flip();
+            future = connection.write(bufferResponse);
+            future.get();
+        } catch (InterruptedException e) {
+            logger.error("Error while handling request.");
+            logger.error(e);
+        } catch (ExecutionException e) {
+            logger.error("Error while handling request.");
+            logger.error(e);
+        }
+        try {
+            connection.close();
+        } catch (IOException e) {
+            logger.error("Can't close connection");
+        }
     }
 }

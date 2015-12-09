@@ -20,7 +20,7 @@ public class RequestHandler {
         StatusCode statusCode;
         if (request.isCorrect()) {
             Path path = Paths.get(rootDir + request.getFilename()).normalize();
-            logger.debug("filename: {}", path.toString());
+//            logger.debug("filename: {}", path.toString());
             try {
                 if (!path.startsWith(rootDir) || !path.toFile().isFile()) {
                     throw new IOException();
@@ -70,7 +70,7 @@ public class RequestHandler {
             }
         }
         response.buildHeader(statusCode);
-        logger.debug("Response\n" + response.getHeader() + (response.getFile() != null ? new String(response.getFile()) : ""));
+//        logger.debug("Response\n" + response.getHeader() + (response.getFile() != null ? new String(response.getFile()) : ""));
         return statusCode;
     }
 }

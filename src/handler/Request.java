@@ -3,6 +3,8 @@ package handler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.UnsupportedEncodingException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
@@ -17,10 +19,18 @@ public class Request {
     private boolean isCorrect;
 
     public Request(String request) {
-        logger.debug(request);
         isCorrect = true;
         try (Scanner input = new Scanner(request)) {
-            method = Method.valueOf(input.next());
+            String met = null;
+            try {
+                met = input.next();
+                method = Method.valueOf(met);
+            } catch (NoSuchElementException e) {
+                logger.debug(e);
+                logger.debug(met);
+                isCorrect = false;
+                return;
+            }
             filename = input.next();
             String[] temp = filename.split("\\?|#");
             if (temp.length > 1) {
@@ -35,8 +45,9 @@ public class Request {
             if(!version.equals("1.1") && !temp.equals("1.0") || !temp[0].equals("HTTP")) {
                 isCorrect = false;
             }
-        } catch (Exception e) {
+        } catch (UnsupportedEncodingException e) {
             logger.debug("Error");
+            logger.debug(e);
             isCorrect = false;
         }
     }

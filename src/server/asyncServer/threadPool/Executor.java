@@ -30,11 +30,7 @@ public class Executor extends Thread {
                 }
                 task = (Runnable) taskQueue.poll();
             }
-            try {
-                task.run();
-            } catch (RuntimeException e) {
-                logger.debug("Error while running task.");
-            }
+            task.run();
         }
     }
 }
