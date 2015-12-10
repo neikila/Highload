@@ -32,7 +32,7 @@ public class Request {
             }
             temp = input.next().split("\\/");
             version = temp[1];
-            if(!version.equals("1.1") && !temp.equals("1.0") || !temp[0].equals("HTTP")) {
+            if(!version.equals("1.1") && !version.equals("1.0") || !temp[0].equals("HTTP")) {
                 isCorrect = false;
             }
         } catch (Exception e) {
