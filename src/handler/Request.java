@@ -21,15 +21,12 @@ public class Request {
     public Request(String request) {
         isCorrect = true;
         try (Scanner input = new Scanner(request)) {
-            String met = null;
             try {
-                met = input.next();
-                method = Method.valueOf(met);
+                method = Method.valueOf(input.next());
             } catch (NoSuchElementException e) {
-                logger.debug(e);
-                logger.debug(met);
-                isCorrect = false;
-                return;
+                logger.debug(request);
+                logger.error(e);
+                throw e;
             }
             filename = input.next();
             String[] temp = filename.split("\\?|#");
@@ -42,7 +39,7 @@ public class Request {
             }
             temp = input.next().split("\\/");
             version = temp[1];
-            if(!version.equals("1.1") && !temp.equals("1.0") || !temp[0].equals("HTTP")) {
+            if(!version.equals("1.1") && !version.equals("1.0") || !temp[0].equals("HTTP")) {
                 isCorrect = false;
             }
         } catch (UnsupportedEncodingException e) {

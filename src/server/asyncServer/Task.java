@@ -1,4 +1,4 @@
-package server.asyncServer.threadPool;
+package server.asyncServer;
 
 import handler.Method;
 import handler.Request;
@@ -6,13 +6,11 @@ import handler.Response;
 import handler.StatusCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import server.asyncServer.RequestHandler;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 /**
  * Created by neikila on 21.10.15.
@@ -31,9 +29,9 @@ public class Task implements Runnable {
     public void run() {
         // TODO read without limit
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1024);
-        Future future = connection.read(byteBuffer);
+        Future<Integer> future = connection.read(byteBuffer);
         try {
-            future.get();
+            int nread = future.get(1, TimeUnit.SECONDS);
             byteBuffer.flip();
             byte[] buffer = new byte[byteBuffer.limit()];
             byteBuffer.get(buffer).clear();
@@ -57,6 +55,9 @@ public class Task implements Runnable {
             logger.error("Error while handling request.");
             logger.error(e);
         } catch (ExecutionException e) {
+            logger.error("Error while handling request.");
+            logger.error(e);
+        } catch (TimeoutException e) {
             logger.error("Error while handling request.");
             logger.error(e);
         }

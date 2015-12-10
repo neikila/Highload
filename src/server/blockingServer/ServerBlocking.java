@@ -1,26 +1,23 @@
-package server.asyncServer;
+package server.blockingServer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import server.threadPool.ThreadPool;
 
-import java.net.InetSocketAddress;
-import java.nio.channels.AsynchronousServerSocketChannel;
-import java.nio.channels.AsynchronousSocketChannel;
-import java.util.concurrent.Future;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 /**
  * Created by neikila on 21.10.15.
  */
-public class AsyncServer {
-    final private static Logger logger = LogManager.getLogger(AsyncServer.class.getName());
-    private AsynchronousServerSocketChannel listener;
+public class ServerBlocking {
+    final private static Logger logger = LogManager.getLogger(ServerBlocking.class.getName());
     private int port = 8081;
     private int poolSize = 1;
     private ThreadPool threadPool;
     private String rootDir;
 
-    public AsyncServer(int port, int poolSize, String rootDir) {
+    public ServerBlocking(int port, int poolSize, String rootDir) {
         this.port = port;
         this.poolSize = poolSize;
         this.rootDir = rootDir;
@@ -29,12 +26,12 @@ public class AsyncServer {
 
     public void start() {
         try {
-            listener = AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(port));
+            ServerSocket serverSocket = new ServerSocket(port);
             for (;true;) {
-                Future temp = listener.accept();
                 try {
-                    AsynchronousSocketChannel clientChannel = (AsynchronousSocketChannel)temp.get();
-                    threadPool.executeTask(new Task(clientChannel, rootDir));
+                    Socket socket = serverSocket.accept();
+//                    logger.debug("Accept");
+                    threadPool.executeTask(new Task(socket, rootDir));
                 } catch (Exception e) {
                     logger.debug("Error");
                 }

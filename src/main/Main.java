@@ -3,7 +3,7 @@ package main;
 import com.beust.jcommander.JCommander;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import server.asyncServer.AsyncServer;
+import server.blockingServer.ServerBlocking;
 
 /**
  * Created by neikila on 16.10.15.
@@ -22,7 +22,8 @@ public class Main {
 //        }
         logger.info("Server started on port {}", port);
         logger.info("Root directory {}", parser.getRootDir());
-        AsyncServer temp = new AsyncServer(port, parser.getPullSize(), parser.getRootDir());
+//        AsyncServer temp = new AsyncServer(port, parser.getPullSize(), parser.getRootDir());
+        ServerBlocking temp = new ServerBlocking(port, parser.getPullSize(), parser.getRootDir());
         temp.start();
 //        try {
 //            new Server(port, parser.getRootDir()).run();
