@@ -18,34 +18,27 @@ public class Task implements Runnable {
     private Socket connection;
     private String rootDir;
     private Logger logger = LogManager.getLogger(Task.class.getName());
-    private OutputStream out;
-    private BufferedReader in;
 
     public Task(Socket connection, String rootDir) {
         this.connection = connection;
         this.rootDir = rootDir;
-        try {
-            out = connection.getOutputStream();
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        } catch (IOException e) {
-            logger.error("Error while opening stream in socket");
-            logger.error(e);
-        }
     }
 
     @Override
     public void run() {
-        StringBuilder requestMessage = new StringBuilder();
         String temp;
+        OutputStream out = null;
+        BufferedReader in = null;
+        StringBuilder requestMessage = new StringBuilder();
         try {
-//            logger.debug("Start");
+            out = connection.getOutputStream();
+            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             while ((temp = in.readLine()) != null) {
                 if (temp.equals(""))
                     break;
                 requestMessage.append(temp).append('\n');
             }
             if (requestMessage.toString().length() > 0) {
-//                logger.debug("Request:\n{}", requestMessage.toString());
                 Request request = new Request(requestMessage.toString());
                 Response response = new Response();
                 StatusCode statusCode = RequestHandler.getResponse(request, response, rootDir);
@@ -60,8 +53,10 @@ public class Task implements Runnable {
             e.printStackTrace();
         } finally {
             try {
-                in.close();
-                out.close();
+                if (in != null)
+                    in.close();
+                if (out != null)
+                    out.close();
                 connection.close();
             } catch (IOException e) {
                 logger.error("Uuups");
