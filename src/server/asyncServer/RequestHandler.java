@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 public class RequestHandler {
     private static Logger logger = LogManager.getLogger(RequestHandler.class.getName());
 
-    public static StatusCode getResponse(Request request, Response response, String rootDir) {
+    public StatusCode getResponse(Request request, Response response, String rootDir) {
         StatusCode statusCode;
         if (request.isCorrect()) {
             Path path = Paths.get(rootDir + request.getFilename()).normalize();
@@ -60,6 +60,7 @@ public class RequestHandler {
                     logger.debug("File not found.");
                     statusCode = StatusCode.NOT_FOUND;
                 }
+                logger.debug("File: {}", request.getFilename());
             }
         } else {
             // If request is not correct

@@ -39,7 +39,7 @@ public class Task implements Runnable {
             Request request = new Request(new String(buffer));
             Response response = new Response();
 
-            StatusCode statusCode = RequestHandler.getResponse(request, response, rootDir);
+            StatusCode statusCode = new RequestHandler().getResponse(request, response, rootDir);
             int size = response.getHeader().length() +
                     (statusCode.equals(StatusCode.OK) && request.getMethod().equals(Method.GET) ?
                             response.getFile().length : 0);

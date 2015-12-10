@@ -27,11 +27,13 @@ public class ServerBlocking {
     public void start() {
         try {
             ServerSocket serverSocket = new ServerSocket(port);
+//            ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(poolSize);
             for (;true;) {
                 try {
                     Socket socket = serverSocket.accept();
 //                    logger.debug("Accept");
                     threadPool.executeTask(new Task(socket, rootDir));
+//                    threadPool.execute(new Task(socket, rootDir));
                 } catch (Exception e) {
                     logger.debug("Error");
                 }

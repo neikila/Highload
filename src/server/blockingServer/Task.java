@@ -41,7 +41,7 @@ public class Task implements Runnable {
             if (requestMessage.toString().length() > 0) {
                 Request request = new Request(requestMessage.toString());
                 Response response = new Response();
-                StatusCode statusCode = RequestHandler.getResponse(request, response, rootDir);
+                StatusCode statusCode = new RequestHandler().getResponse(request, response, rootDir);
                 out.write(response.getHeader().getBytes());
                 if (statusCode.equals(StatusCode.OK) && request.getMethod().equals(Method.GET)) {
                     out.write(response.getFile());
