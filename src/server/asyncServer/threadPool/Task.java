@@ -25,7 +25,6 @@ public class Task implements Runnable {
 
     @Override
     public void run() {
-        // TODO read without limit
         ByteBuffer buffer = ByteBuffer.allocateDirect(1024);
         connection.read(buffer, buffer, new CompletionHandler<Integer, ByteBuffer>() {
             @Override

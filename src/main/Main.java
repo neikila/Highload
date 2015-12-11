@@ -22,6 +22,7 @@ public class Main {
 //        }
         logger.info("Server started on port {}", port);
         logger.info("Root directory {}", parser.getRootDir());
+        logger.info("Pullsize: {}", parser.getPullSize());
         AsyncServer temp = new AsyncServer(port, parser.getPullSize(), parser.getRootDir());
         temp.start();
 //        try {
