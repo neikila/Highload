@@ -70,7 +70,7 @@ public class RequestHandler {
             }
         }
         response.buildHeader(statusCode);
-        logger.debug("Response\n" + response.getHeader() + (response.getFile() != null ? new String(response.getFile()) : ""));
+//        logger.debug("Response\n" + response.getHeader() + (response.getFile() != null ? new String(response.getFile()) : ""));
         return statusCode;
     }
 }

@@ -25,8 +25,8 @@ public class ResponseWriter implements CompletionHandler<Integer, ByteBuffer> {
 
     @Override
     public void completed(Integer result, ByteBuffer attachment) {
-        logger.debug("Bytes written: {}", result);
-        logger.debug("Left: position = {}, limit = {}", attachment.position(), attachment.limit());
+//        logger.debug("Bytes written: {}", result);
+//        logger.debug("Left: position = {}, limit = {}", attachment.position(), attachment.limit());
         try {
             connection.close();
             logger.debug("Connection closed");
